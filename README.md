@@ -1,10 +1,14 @@
 # Audio Snipping Tool by Frost Sheridan
 
+![Splash screen](https://i.imgur.com/IOcdUa3.png)
+
 ## What is this?
 
 Audio Snipping Tool is a program that records audio that your computer is playing and lets you instantly drag and drop it into any folder or other program (such as Discord) as a WAV or 320kbps MP3. It's the audio equivalent of the Windows Snipping Tool.
 
 ## How to use it
+
+![Screenshot](https://i.imgur.com/zGsJeg1.png)
 
 Click the "Record New" button to start recording audio that your computer is playing. The status bar along the bottom of the window will display how long you have been recording for. The program will not start recording until your computer starts playing audio.
 
