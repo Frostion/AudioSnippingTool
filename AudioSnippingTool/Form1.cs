@@ -237,6 +237,9 @@ namespace AudioSnippingTool
                     selection_end = num_audio_blocks - 1;
                     pictureBox_wave.Refresh();
                 }
+
+                if(selection_start < 0) { selection_start = 0; }
+                if(selection_end > num_audio_blocks - 1) { selection_end = num_audio_blocks - 1; }
                 saveTrimmedAudio();
             }
         }
