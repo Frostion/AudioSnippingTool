@@ -62,7 +62,7 @@
             // toolStripStatusLabel_status
             // 
             this.toolStripStatusLabel_status.Name = "toolStripStatusLabel_status";
-            this.toolStripStatusLabel_status.Size = new System.Drawing.Size(223, 17);
+            this.toolStripStatusLabel_status.Size = new System.Drawing.Size(216, 17);
             this.toolStripStatusLabel_status.Text = "Audio Snipping Tool - by Frost Sheridan";
             // 
             // toolStrip1
@@ -89,7 +89,7 @@
             this.toolStripButton_record.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripButton_record.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton_record.Name = "toolStripButton_record";
-            this.toolStripButton_record.Size = new System.Drawing.Size(102, 28);
+            this.toolStripButton_record.Size = new System.Drawing.Size(99, 28);
             this.toolStripButton_record.Text = "Record New";
             this.toolStripButton_record.ToolTipText = "Start recording a new audio snippet";
             this.toolStripButton_record.Click += new System.EventHandler(this.toolStripButton_record_Click);
@@ -101,7 +101,7 @@
             this.toolStripButton_stop.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripButton_stop.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton_stop.Name = "toolStripButton_stop";
-            this.toolStripButton_stop.Size = new System.Drawing.Size(61, 28);
+            this.toolStripButton_stop.Size = new System.Drawing.Size(59, 28);
             this.toolStripButton_stop.Text = "Stop";
             this.toolStripButton_stop.ToolTipText = "End recording or stop listening";
             this.toolStripButton_stop.Click += new System.EventHandler(this.toolStripButton_stop_Click);
@@ -113,7 +113,7 @@
             this.toolStripButton_play.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripButton_play.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton_play.Name = "toolStripButton_play";
-            this.toolStripButton_play.Size = new System.Drawing.Size(67, 28);
+            this.toolStripButton_play.Size = new System.Drawing.Size(66, 28);
             this.toolStripButton_play.Text = "Listen";
             this.toolStripButton_play.ToolTipText = "Play recorded audio";
             this.toolStripButton_play.Click += new System.EventHandler(this.toolStripButton_play_Click);
@@ -126,7 +126,7 @@
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(62, 28);
+            this.toolStripLabel1.Size = new System.Drawing.Size(58, 28);
             this.toolStripLabel1.Text = "Export as:";
             // 
             // toolStripButton_wav
@@ -137,7 +137,7 @@
             this.toolStripButton_wav.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_wav.Image")));
             this.toolStripButton_wav.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton_wav.Name = "toolStripButton_wav";
-            this.toolStripButton_wav.Size = new System.Drawing.Size(39, 28);
+            this.toolStripButton_wav.Size = new System.Drawing.Size(36, 28);
             this.toolStripButton_wav.Text = "WAV";
             this.toolStripButton_wav.ToolTipText = "Recording will be exported as a .wav file";
             this.toolStripButton_wav.Click += new System.EventHandler(this.toolStripButton_wav_Click);
@@ -148,7 +148,7 @@
             this.toolStripButton_mp3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_mp3.Image")));
             this.toolStripButton_mp3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton_mp3.Name = "toolStripButton_mp3";
-            this.toolStripButton_mp3.Size = new System.Drawing.Size(34, 28);
+            this.toolStripButton_mp3.Size = new System.Drawing.Size(35, 28);
             this.toolStripButton_mp3.Text = "MP3";
             this.toolStripButton_mp3.ToolTipText = "Recording will be exported as a 320kbps .mp3 file";
             this.toolStripButton_mp3.Click += new System.EventHandler(this.toolStripButton_mp3_Click);
@@ -161,7 +161,7 @@
             this.toolStripButton_export.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripButton_export.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton_export.Name = "toolStripButton_export";
-            this.toolStripButton_export.Size = new System.Drawing.Size(71, 28);
+            this.toolStripButton_export.Size = new System.Drawing.Size(69, 28);
             this.toolStripButton_export.Text = "Export";
             this.toolStripButton_export.ToolTipText = "Drag me to another window to export audio";
             this.toolStripButton_export.MouseDown += new System.Windows.Forms.MouseEventHandler(this.toolStripButton_export_MouseDown);
@@ -173,7 +173,7 @@
             // 
             // pictureBox_wave
             // 
-            this.pictureBox_wave.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.pictureBox_wave.Cursor = System.Windows.Forms.Cursors.Default;
             this.pictureBox_wave.Location = new System.Drawing.Point(8, 34);
             this.pictureBox_wave.Name = "pictureBox_wave";
             this.pictureBox_wave.Size = new System.Drawing.Size(500, 150);
