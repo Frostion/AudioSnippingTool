@@ -49,3 +49,40 @@ C:\Users\acren\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSn
 C:\Users\acren\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\bin\Debug\NAudio.xml
 C:\Users\acren\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\bin\Debug\NAudio.Lame.pdb
 C:\Users\acren\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.csproj.CopyComplete
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\bin\Debug\libmp3lame.32.dll
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\bin\Debug\libmp3lame.64.dll
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\bin\Debug\AudioSnippingTool.exe.config
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\bin\Debug\AudioSnippingTool.exe
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\bin\Debug\AudioSnippingTool.pdb
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\bin\Debug\NAudio.dll
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\bin\Debug\NAudio.Lame.dll
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\bin\Debug\NAudio.xml
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\bin\Debug\NAudio.Lame.pdb
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.csprojAssemblyReference.cache
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.Form1.resources
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.Properties.Resources.resources
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.csproj.GenerateResource.cache
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.csproj.CoreCompileInputs.cache
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.csproj.CopyComplete
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.exe
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.pdb
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\bin\Debug\FftSharp.dll
+C:\Users\arennie\Desktop\AudioSnippingTool\AudioSnippingTool\bin\Debug\System.Drawing.Common.dll
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\bin\Debug\libmp3lame.32.dll
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\bin\Debug\libmp3lame.64.dll
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\bin\Debug\AudioSnippingTool.exe.config
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\bin\Debug\AudioSnippingTool.exe
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\bin\Debug\AudioSnippingTool.pdb
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\bin\Debug\FftSharp.dll
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\bin\Debug\NAudio.dll
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\bin\Debug\NAudio.Lame.dll
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\bin\Debug\NAudio.xml
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\bin\Debug\NAudio.Lame.pdb
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.csprojAssemblyReference.cache
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.Form1.resources
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.Properties.Resources.resources
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.csproj.GenerateResource.cache
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.csproj.CoreCompileInputs.cache
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.csproj.CopyComplete
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.exe
+C:\Users\Frost Sheridan\Nextcloud\Projects - Tech\Visual Studio\AudioSnippingTool\AudioSnippingTool\obj\Debug\AudioSnippingTool.pdb

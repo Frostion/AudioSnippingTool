@@ -16,22 +16,19 @@ namespace AudioSnippingTool
 {
     public partial class Form1 : Form
     {
-        private readonly string filename_trim_wav = "AST_Export.wav";
-        private readonly string filename_trim_mp3 = "AST_Export.mp3";
+        string filename_name, filename_ext;
 
         WasapiLoopbackCapture audio_capture;
-        WaveFileReader audio_player_reader;
         WaveOut audio_player;
-        
-        List<Byte> recorded_audio = new List<Byte>();
-        byte[] recorded_audio_array;
+
+        List<float> recorded_audio = new List<float>();
         WaveFormat wave_format;
 
         enum FileStatus { NONE, RECORDING, LISTENING, READY, WAITING };
         FileStatus file_status = FileStatus.NONE;
         bool selecting = false;
-        long selection_start = 0, selection_end = 0, num_audio_blocks = 0;
-        float recording_seconds = 0;
+        int selection_start = 0, selection_end = 0, recorded_audio_samples = 0;
+        float recorded_audio_seconds = 0;
         Bitmap waveform_bmp;
 
         public Form1()
@@ -40,6 +37,7 @@ namespace AudioSnippingTool
 
             //create bmp for drawing waveform display onto
             waveform_bmp = new Bitmap(pictureBox_wave.Width, pictureBox_wave.Height);
+            comboBoxFileType.SelectedIndex = 0;
         }
 
         void showSplashScreen()
@@ -57,6 +55,8 @@ namespace AudioSnippingTool
                     toolStripButton_record.Enabled = true;
                     toolStripButton_stop.Enabled = false;
                     toolStripButton_play.Enabled = false;
+                    toolStripDropDownButtonNormalize.Enabled = false;
+                    comboBoxFileType.Enabled = true;
                     toolStripButton_export.Enabled = false;
                     timer_updateplaydisp.Enabled = false;
                     showSplashScreen();
@@ -67,6 +67,8 @@ namespace AudioSnippingTool
                     toolStripButton_record.Enabled = false;
                     toolStripButton_stop.Enabled = true;
                     toolStripButton_play.Enabled = false;
+                    toolStripDropDownButtonNormalize.Enabled = false;
+                    comboBoxFileType.Enabled = false;
                     toolStripButton_export.Enabled = false;
                     timer_updateplaydisp.Enabled = true;
                     break;
@@ -75,6 +77,8 @@ namespace AudioSnippingTool
                     toolStripButton_record.Enabled = false;
                     toolStripButton_stop.Enabled = false;
                     toolStripButton_play.Enabled = false;
+                    toolStripDropDownButtonNormalize.Enabled = false;
+                    comboBoxFileType.Enabled = false;
                     toolStripButton_export.Enabled = false;
                     timer_updateplaydisp.Enabled = false;
                     break;
@@ -83,35 +87,38 @@ namespace AudioSnippingTool
                     toolStripButton_record.Enabled = true;
                     toolStripButton_stop.Enabled = false;
                     toolStripButton_play.Enabled = true;
+                    toolStripDropDownButtonNormalize.Enabled = true;
+                    comboBoxFileType.Enabled = true;
                     toolStripButton_export.Enabled = true;
                     timer_updateplaydisp.Enabled = false;
                     break;
             }
         }
 
-        //======================================================================================================
+
+
+        //============================================================================================================================================================
         //audio events
-        //======================================================================================================
+        //============================================================================================================================================================
 
         //new data is available while recording, so save it to the files
         private void audioDataAvailable(object sender, WaveInEventArgs e)
         {
-            for (int i = 0; i < e.BytesRecorded; i++)
+            for (int i = 0; i < e.BytesRecorded; i += 4)
             {
-                recorded_audio.Add(e.Buffer[i]);
+                recorded_audio.Add(BitConverter.ToSingle(e.Buffer, i));
             }
 
-            recording_seconds = recorded_audio.Count / (float)wave_format.AverageBytesPerSecond;
-            toolStripStatusLabel_status.Text = "Now recording... " + recording_seconds.ToString("0.0") + " sec";
+            recorded_audio_seconds = recorded_audio.Count / (float)wave_format.SampleRate / wave_format.Channels;
+            toolStripStatusLabel_status.Text = "Now recording... " + recorded_audio_seconds.ToString("0.0") + " sec";
         }
 
         //recording has been stopped by the user
         private void audioRecordingStopped(object sender, StoppedEventArgs e)
         {
-            recorded_audio_array = recorded_audio.ToArray();
             selection_start = 0;
-            num_audio_blocks = recorded_audio.Count / wave_format.BlockAlign;
-            selection_end = num_audio_blocks - 1;
+            recorded_audio_samples = recorded_audio.Count / wave_format.Channels;
+            selection_end = recorded_audio_samples - 1;
             audio_capture.Dispose();
 
             if (recorded_audio.Count == 0)
@@ -120,16 +127,14 @@ namespace AudioSnippingTool
             }
             else
             {
-                setStatus(FileStatus.READY);
-                renderWaveformDisplay();
                 saveTrimmedAudio();
+                renderWaveformDisplay();
             }
         }
 
         //playback has completed or has been stopped by the user
         void audioPlaybackStopped(object sender, StoppedEventArgs e)
         {
-            audio_player_reader.Dispose();
             audio_player.Dispose();
 
             //update UI
@@ -138,9 +143,10 @@ namespace AudioSnippingTool
         }
 
 
-        //======================================================================================================
+
+        //============================================================================================================================================================
         //ui element events
-        //======================================================================================================
+        //============================================================================================================================================================
 
         private void toolStripButton_record_Click(object sender, EventArgs e)
         {
@@ -181,24 +187,65 @@ namespace AudioSnippingTool
         {
             //update UI
             setStatus(FileStatus.LISTENING);
-            
 
             //play file
-            audio_player_reader = new WaveFileReader(filename_trim_wav);
+            IWaveProvider provider = new RawSourceWaveStream(new MemoryStream(getSelectedAsByteArray()), wave_format);
             audio_player = new WaveOut();
-            audio_player.Init(audio_player_reader);
+            audio_player.Init(provider);
             audio_player.Play();
             audio_player.PlaybackStopped += audioPlaybackStopped;
         }
 
-        private void pictureBox_wave_MouseDown(object sender, MouseEventArgs e)
+        private void toolStripMenuItemNormalize25_Click(object sender, EventArgs e)
+        {
+            normalizeRecordedAudio(0.25);
+        }
+
+        private void toolStripMenuItemNormalize50_Click(object sender, EventArgs e)
+        {
+            normalizeRecordedAudio(0.5);
+        }
+
+        private void toolStripMenuItemNormalize100_Click(object sender, EventArgs e)
+        {
+            normalizeRecordedAudio(1);
+        }
+
+        private void comboBoxFileType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(file_status == FileStatus.READY)
             {
-                if(e.Button == MouseButtons.Right)
+                saveTrimmedAudio();
+            }
+        }
+
+        private void toolStripButton_export_MouseDown(object sender, MouseEventArgs e)
+        {
+            String new_filename = textBoxFileName.Text;
+            File.Move(filename_name + filename_ext, new_filename + filename_ext);
+            filename_name = new_filename;
+
+            if (file_status == FileStatus.READY)
+            {
+                FileInfo fi = new FileInfo(filename_name + filename_ext);
+                string[] filename_to_drag = { fi.FullName };
+                toolStripButton_export.DoDragDrop(new DataObject(DataFormats.FileDrop, filename_to_drag), DragDropEffects.Copy);
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            deleteFileIfExists(filename_name + filename_ext);
+        }
+
+        private void pictureBox_wave_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (file_status == FileStatus.READY)
+            {
+                if (e.Button == MouseButtons.Right)
                 {
                     selection_start = 0;
-                    selection_end = num_audio_blocks - 1;
+                    selection_end = recorded_audio_samples - 1;
                     pictureBox_wave.Refresh();
                     saveTrimmedAudio();
                 }
@@ -213,7 +260,7 @@ namespace AudioSnippingTool
 
         private void pictureBox_wave_MouseMove(object sender, MouseEventArgs e)
         {
-            if(selecting)
+            if (selecting)
             {
                 selection_end = mouseXToBlock(e.Location.X);
                 pictureBox_wave.Refresh();
@@ -222,94 +269,106 @@ namespace AudioSnippingTool
 
         private void pictureBox_wave_MouseUp(object sender, MouseEventArgs e)
         {
-            if(selecting && e.Button == MouseButtons.Left)
+            if (selecting && e.Button == MouseButtons.Left)
             {
                 selecting = false;
                 if (selection_end < selection_start)
                 {
-                    long temp = selection_start;
+                    int temp = selection_start;
                     selection_start = selection_end;
                     selection_end = temp;
                 }
                 if (selection_end - selection_start == 0)
                 {
                     selection_start = 0;
-                    selection_end = num_audio_blocks - 1;
+                    selection_end = recorded_audio_samples - 1;
                     pictureBox_wave.Refresh();
                 }
 
-                if(selection_start < 0) { selection_start = 0; }
-                if(selection_end > num_audio_blocks - 1) { selection_end = num_audio_blocks - 1; }
+                if (selection_start < 0) { selection_start = 0; }
+                if (selection_end > recorded_audio_samples - 1) { selection_end = recorded_audio_samples - 1; }
                 saveTrimmedAudio();
             }
         }
-        
 
-        private void toolStripButton_wav_Click(object sender, EventArgs e)
-        {
-            toolStripButton_wav.Checked = true;
-            toolStripButton_mp3.Checked = false;
-        }
 
-        private void toolStripButton_mp3_Click(object sender, EventArgs e)
-        {
-            toolStripButton_mp3.Checked = true;
-            toolStripButton_wav.Checked = false;
-        }
 
-        private void toolStripButton_export_MouseDown(object sender, MouseEventArgs e)
+        //============================================================================================================================================================
+        //file and audio operations
+        //============================================================================================================================================================
+
+        void saveTrimmedAudio()
         {
-            if (file_status == FileStatus.READY)
+            setStatus(FileStatus.WAITING);
+            deleteFileIfExists(filename_name + filename_ext);
+            filename_name = textBoxFileName.Text;
+            byte[] selected_audio_array = getSelectedAsByteArray();
+
+            if(comboBoxFileType.SelectedIndex == 0)
             {
-                FileInfo fi;
-                if (toolStripButton_wav.Checked)
-                {
-                    fi = new FileInfo(filename_trim_wav);
-                }
-                else
-                {
-                    fi = new FileInfo(filename_trim_mp3);
-                }
-
-                string[] filename_to_drag = { fi.FullName };
-                toolStripButton_export.DoDragDrop(new DataObject(DataFormats.FileDrop, filename_to_drag), DragDropEffects.Copy);
+                filename_ext = ".wav";
+                WaveFileWriter writer = new WaveFileWriter(filename_name + filename_ext, wave_format);
+                writer.Write(selected_audio_array, 0, selected_audio_array.Length);
+                writer.Dispose();
             }
+            else
+            {
+                int bitrate;
+                if(comboBoxFileType.SelectedIndex == 1) { bitrate = 320; }
+                else { bitrate = 192; }
+
+                filename_ext = ".mp3";
+                LameMP3FileWriter writer = new LameMP3FileWriter(filename_name + filename_ext, wave_format, bitrate);
+                writer.Write(selected_audio_array, 0, selected_audio_array.Length);
+                writer.Dispose();
+            }
+
+            recorded_audio_seconds = (float)selected_audio_array.Length / wave_format.AverageBytesPerSecond;
+            double file_mb = new FileInfo(filename_name + filename_ext).Length / 1024.0 / 1024.0;
+
+            toolStripStatusLabel_status.Text = "Selected length: " + recorded_audio_seconds.ToString("0.0") + " sec | File size: " + file_mb.ToString("0.00") + " MB";
+            setStatus(FileStatus.READY);
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            deleteFileIfExists(filename_trim_wav);
-            deleteFileIfExists(filename_trim_mp3);
-        }
         void deleteFileIfExists(string filename)
         {
-            if(new FileInfo(filename).Exists)
+            try
             {
                 File.Delete(filename);
             }
+            catch { }
         }
-        void saveTrimmedAudio()
+
+        byte[] getRecordingAsByteArray(int start, int length)
         {
-            int start_pos = (int)(selection_start * wave_format.BlockAlign);
-            int length = (int)(wave_format.BlockAlign * (selection_end - selection_start));
-            byte[] buf = recorded_audio.GetRange(start_pos, length).ToArray();
-
-            WaveFileWriter writer_wav = new WaveFileWriter(filename_trim_wav, wave_format);
-            LameMP3FileWriter writer_mp3 = new LameMP3FileWriter(filename_trim_mp3, wave_format, 320);
-            writer_wav.Write(buf, 0, buf.Length);
-            writer_mp3.Write(buf, 0, buf.Length);
-            writer_wav.Dispose();
-            writer_mp3.Dispose();
-
-            recording_seconds = (float)writer_wav.Length / writer_wav.WaveFormat.AverageBytesPerSecond;
-            double file_mb_wav = new FileInfo(filename_trim_wav).Length / 1024.0 / 1024.0;
-            double file_mb_mp3 = new FileInfo(filename_trim_mp3).Length / 1024.0 / 1024.0;
-            toolStripStatusLabel_status.Text = "Recording time: " + recording_seconds.ToString("0.0") + " sec | WAV size: " + file_mb_wav.ToString("0.00") + " MB | MP3 size: " + file_mb_mp3.ToString("0.00") + " MB";
+            byte[] output = new byte[length * 4 * wave_format.Channels];
+            float[] input = recorded_audio.GetRange(start * wave_format.Channels, length * wave_format.Channels).ToArray();
+            Buffer.BlockCopy(input, 0, output, 0, output.Length);
+            return output;
         }
 
-        //======================================================================================================
+        byte[] getSelectedAsByteArray()
+        {
+            return getRecordingAsByteArray(selection_start, selection_end - selection_start);
+        }
+
+        void normalizeRecordedAudio(double new_max)
+        {
+            float min = recorded_audio.Min();
+            float max = recorded_audio.Max();
+            for (int i = 0; i < recorded_audio.Count; i++)
+            {
+                recorded_audio[i] = map(recorded_audio[i], min, max, (float)-new_max, (float)new_max);
+            }
+            saveTrimmedAudio();
+            renderWaveformDisplay();
+        }
+
+
+
+        //============================================================================================================================================================
         //draw waveform display
-        //======================================================================================================
+        //============================================================================================================================================================
 
         private void pictureBox_wave_Paint(object sender, PaintEventArgs e)
         {
@@ -317,23 +376,23 @@ namespace AudioSnippingTool
             g.Clear(Color.Black);
             if(file_status != FileStatus.NONE && file_status != FileStatus.RECORDING)
             {
-                float rect_x = map((selection_end >= selection_start) ? selection_start : selection_end, 0, num_audio_blocks, 0, pictureBox_wave.Width);
-                float rect_w = map(Math.Abs(selection_end - selection_start), 0, num_audio_blocks - 1, 0, pictureBox_wave.Width);
+                float rect_x = map((selection_end >= selection_start) ? selection_start : selection_end, 0, recorded_audio_samples, 0, pictureBox_wave.Width);
+                float rect_w = map(Math.Abs(selection_end - selection_start), 0, recorded_audio_samples - 1, 0, pictureBox_wave.Width);
                 SolidBrush b = new SolidBrush(Color.FromArgb(30,0,70));
                 g.FillRectangle(b, rect_x, 0, rect_w, pictureBox_wave.Height);
 
                 if(file_status == FileStatus.LISTENING)
                 {
-                    rect_w = map(audio_player.GetPosition(), 0, audio_player_reader.Length, 0, rect_w);
+                    rect_w = map(audio_player.GetPosition() / wave_format.BlockAlign, 0, selection_end - selection_start, 0, rect_w);
                     b = new SolidBrush(Color.FromArgb(0,150,0));
                     g.FillRectangle(b, rect_x, 0, rect_w, pictureBox_wave.Height);
                 }
 
-                g.DrawImage(waveform_bmp,0,0,pictureBox_wave.Width, pictureBox_wave.Height);
+                g.DrawImage(waveform_bmp, 0, 0, pictureBox_wave.Width, pictureBox_wave.Height);
             }
             else
             {
-                g.DrawImage(Properties.Resources.splash,0,0,pictureBox_wave.Width,pictureBox_wave.Height);
+                g.DrawImage(Properties.Resources.splash, 0, 0, pictureBox_wave.Width, pictureBox_wave.Height);
             }
         }
 
@@ -342,22 +401,68 @@ namespace AudioSnippingTool
             using (Graphics g = Graphics.FromImage(waveform_bmp))
             {
                 g.Clear(Color.Transparent);
+                g.DrawImage(drawSpectrogram(), 0, 0, waveform_bmp.Width, waveform_bmp.Height);
 
-                int num_samples = recorded_audio.Count / (wave_format.BlockAlign / wave_format.Channels);
-                
+                float last_y = waveform_bmp.Height / 2;
                 for(int x = 0; x < waveform_bmp.Width; x++)
                 {
-                    int audio_pos = (int)map(x, 0, waveform_bmp.Width, 0, num_samples / 2) * 2;
-                    float y_left = map(Math.Abs(getSample(audio_pos)), 0, 1, waveform_bmp.Height / 2, 0);
-                    float y_right = map(Math.Abs(getSample(audio_pos + 1)), 0, 1, waveform_bmp.Height / 2, waveform_bmp.Height - 1);
-                    g.DrawLine(Pens.Cyan, x, y_left, x, y_right);
+                    int audio_pos = (int)map(x, 0, waveform_bmp.Width, 0, recorded_audio_samples);
+                    float y_left = map(Math.Abs(getSample(audio_pos, 0)), 0, 1, waveform_bmp.Height / 2, 0);
+                    float y_right = map(Math.Abs(getSample(audio_pos, 1)), 0, 1, waveform_bmp.Height / 2, waveform_bmp.Height - 1);
+                    g.DrawLine(Pens.White, x, y_left, x, y_right);
                 }
             }
             pictureBox_wave.Refresh();
         }
-        float getSample(int sample_num)
+        
+        Bitmap drawSpectrogram()
         {
-            return BitConverter.ToSingle(recorded_audio_array,sample_num * (wave_format.BlockAlign / wave_format.Channels));
+            List<double> samples = new List<double>();
+            for(int i = 0; i < recorded_audio.Count; i += wave_format.Channels)
+            {
+                double acc = 0;
+                for(int c = 0; c < wave_format.Channels; c++) { acc += recorded_audio[i + c]; }
+                samples.Add(acc / wave_format.Channels);
+            }
+
+            int fft_length = 512;
+            double[] window = FftSharp.Window.Hanning(fft_length);
+            int spec_width = samples.Count / fft_length;
+            Bitmap bmp = new Bitmap(spec_width, waveform_bmp.Height);
+
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.Clear(Color.Transparent);
+                for(int slice = 0; slice < spec_width; slice++)
+                {
+                    double[] buf = samples.GetRange(slice * fft_length, fft_length).ToArray();
+                    FftSharp.Window.ApplyInPlace(window, buf);
+                    double[] result = FftSharp.Transform.FFTpower(buf);
+                    float result_max = (float)result.Max();
+                    for(int y = 0; y < bmp.Height; y++)
+                    {
+                        int pos = (int)((float)y / bmp.Height * (result.Length / 2));
+                        float r = (float)result[pos];
+                        if(r < -60) { r = -60; }
+
+                        int val = (int)map(r, result_max, -60, 255, 0);
+                        if(val < 0 || val > 255) { val = 0; }
+                        bmp.SetPixel(slice, bmp.Height - y - 1, Color.FromArgb(val, 0, 255, 255));
+                    }
+                }
+            }
+            return bmp;
+        }
+        
+
+
+        //============================================================================================================================================================
+        //misc helper functions
+        //============================================================================================================================================================
+
+        float getSample(int sample_num, int channel)
+        {
+            return recorded_audio[sample_num * wave_format.Channels + channel];
         }
 
         private void timer_updateplaydisp_Tick(object sender, EventArgs e)
@@ -375,9 +480,9 @@ namespace AudioSnippingTool
             return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
         }
 
-        long mouseXToBlock(int mouse_x)
+        int mouseXToBlock(int mouse_x)
         {
-            return maplong(mouse_x, 0, pictureBox_wave.Width, 0, num_audio_blocks);
+            return (int)maplong(mouse_x, 0, pictureBox_wave.Width, 0, recorded_audio_samples);
         }
     }
 }
